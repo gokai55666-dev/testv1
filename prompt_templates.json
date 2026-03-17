@@ -1,7 +1,13 @@
 {
-  "signal": "List 5 trending opportunities in crypto or AI with strong short-term momentum.",
-  "filter": "Rank these by risk/reward and probability of success. Be strict.",
-  "validate": "List hidden risks, failure points, and red flags.",
-  "strategy": "Turn this into a step-by-step execution plan with entry, exit, and stop loss.",
-  "critic": "Critique this plan aggressively and improve it."
+  "signal": "List 5 trending opportunities in crypto, AI, or emerging tech with strong short-term momentum. Include key metrics, social sentiment, and market context.",
+  
+  "filter": "Rank these opportunities by probability of success, asymmetric upside, and risk management. Explain reasoning and highlight any red flags.",
+  
+  "validate": "For the top 1-2 ranked opportunities, provide a deep risk analysis. Include hidden risks, failure points, and potential market pitfalls. Suggest mitigation strategies.",
+  
+  "strategy": "Using the validated opportunities, create a step-by-step action plan. Include: \n- Entry points or starting actions\n- Exit or completion criteria\n- Stop loss or risk limits\n- Timeframe for each step\n- Any tools or resources required\nAlso include a brief summary suitable for content creation (blog/social media).",
+  
+  "image": "Create a visual representation of the scenario or strategy described in the content. Maintain consistency in style for repeated generations. Include character/subject if applicable, environment, mood, color palette, and cinematic style. Ensure the output is ultra-detailed, high-resolution, and professional.",
+  
+  "critic": "Review the entire strategy, content, and image plan. Critique weaknesses, unrealistic assumptions, and potential blind spots. Then suggest improvements or refinements for a more robust and executable system."
 }
