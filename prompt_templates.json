@@ -1,0 +1,7 @@
+{
+  "signal": "List 5 trending opportunities in crypto or AI with strong short-term momentum.",
+  "filter": "Rank these by risk/reward and probability of success. Be strict.",
+  "validate": "List hidden risks, failure points, and red flags.",
+  "strategy": "Turn this into a step-by-step execution plan with entry, exit, and stop loss.",
+  "critic": "Critique this plan aggressively and improve it."
+}
