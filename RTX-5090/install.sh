@@ -1,9 +1,8 @@
 #!/bin/bash
-
 set -e
 
 echo "Creating folders..."
-mkdir -p /workspace/{logs,ollama,ComfyUI}
+mkdir -p /workspace/{logs,ollama,ComfyUI,girlbot}
 
 echo "Setting Ollama path..."
 echo 'export OLLAMA_MODELS=/workspace/ollama' >> ~/.bashrc
@@ -17,18 +16,20 @@ pip install --upgrade pip
 pip install streamlit requests
 
 echo "Installing Ollama..."
-curl -fsSL https://ollama.ai/install.sh | sh
+curl -fsSL https://ollama.com/install.sh | sh
+
+echo "Starting Ollama..."
+ollama serve > /workspace/logs/ollama.log 2>&1 &
+sleep 5
 
 echo "Pulling model..."
-ollama serve &
-sleep 5
 ollama pull dolphin-llama3:8b
-pkill ollama
 
 echo "Installing ComfyUI..."
 cd /workspace
-git clone https://github.com/comfyanonymous/ComfyUI.git
-
+if [ ! -d "ComfyUI" ]; then
+    git clone https://github.com/comfyanonymous/ComfyUI.git
+fi
 cd ComfyUI
 pip install -r requirements.txt
 
