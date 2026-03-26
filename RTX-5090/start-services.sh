@@ -16,17 +16,19 @@ ollama serve > /workspace/logs/ollama.log 2>&1 &
 sleep 5
 
 # Pull model if missing
-ollama list | grep dolphin-llama3 || ollama pull dolphin-llama3:8b
+if ! ollama list | grep -q dolphin-llama3; then
+    ollama pull dolphin-llama3:8b
+fi
 
 # Start ComfyUI
 echo "Starting ComfyUI..."
 cd /workspace/ComfyUI
 python main.py --listen 0.0.0.0 --port 8188 --highvram > /workspace/logs/comfyui.log 2>&1 &
+cd /workspace
 sleep 5
 
 # Start Streamlit
 echo "Starting Streamlit..."
-cd /workspace
-streamlit run app.py --server.address 0.0.0.0 --server.port 8501 > /workspace/logs/streamlit.log 2>&1 &
+streamlit run /workspace/girlbot/app.py --server.address 0.0.0.0 --server.port 8501 > /workspace/logs/streamlit.log 2>&1 &
 
 echo "=== All Services Started ==="
