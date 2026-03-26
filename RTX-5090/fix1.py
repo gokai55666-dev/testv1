@@ -1,54 +1,88 @@
 #!/bin/bash
-echo "=== FIXING GIRL BOT AI SERVICES ==="
+set -e
 
-# Kill all old services
-pkill -9 ollama 2>/dev/null
-pkill -f main.py 2>/dev/null
-pkill -f streamlit 2>/dev/null
+echo "=== GIRL BOT AI - CLEAN START ==="
 
-# Make sure directories exist
+# Kill all old services (no zombies)
+pkill -9 ollama 2>/dev/null || true
+pkill -f "python3 main.py" 2>/dev/null || true
+pkill -f streamlit 2>/dev/null || true
+
+# Wait for processes to fully die
+sleep 2
+
+# Ensure directories exist
 mkdir -p /workspace/logs /workspace/ollama
 
-# Start Ollama
+# ============================================
+# 1. START OLLAMA
+# ============================================
+echo ""
+echo "[1/3] Starting Ollama..."
 export OLLAMA_MODELS=/workspace/ollama
-ollama serve > /workspace/logs/ollama.log 2>&1 &
+nohup ollama serve > /workspace/logs/ollama.log 2>&1 &
+OLLAMA_PID=$!
 sleep 5
 
-# Check Ollama
-if curl -s http://localhost:11434/api/tags > /dev/null; then
-    echo "✅ Ollama is running"
+if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
+    echo "✅ Ollama is running (PID: $OLLAMA_PID)"
 else
     echo "❌ Ollama failed to start"
+    tail -5 /workspace/logs/ollama.log
 fi
 
-# Start ComfyUI
+# ============================================
+# 2. START COMFYUI
+# ============================================
+echo ""
+echo "[2/3] Starting ComfyUI..."
 cd /workspace/ComfyUI
-python3 main.py --listen 0.0.0.0 --port 8188 --highvram > /workspace/logs/comfyui.log 2>&1 &
+nohup python3 main.py --listen 0.0.0.0 --port 8188 --highvram > /workspace/logs/comfyui.log 2>&1 &
+COMFY_PID=$!
 cd /workspace
 sleep 10
 
-# Check ComfyUI
-if curl -s http://localhost:8188/system_stats > /dev/null; then
-    echo "✅ ComfyUI is running"
+if curl -s http://localhost:8188/system_stats > /dev/null 2>&1; then
+    echo "✅ ComfyUI is running (PID: $COMFY_PID)"
 else
     echo "❌ ComfyUI failed to start"
+    tail -5 /workspace/logs/comfyui.log
 fi
 
-# Start Streamlit
-streamlit run /workspace/girlbot/app.py --server.port 8501 --server.address 0.0.0.0 --server.headless true > /workspace/logs/streamlit.log 2>&1 &
+# ============================================
+# 3. START STREAMLIT
+# ============================================
+echo ""
+echo "[3/3] Starting Streamlit..."
+nohup streamlit run /workspace/girlbot/app.py \
+    --server.port 8501 \
+    --server.address 0.0.0.0 \
+    --server.headless true \
+    > /workspace/logs/streamlit.log 2>&1 &
+STREAMLIT_PID=$!
 sleep 5
 
-# Check Streamlit
-if curl -s http://localhost:8501 > /dev/null; then
-    echo "✅ Streamlit is running"
+if curl -s http://localhost:8501 > /dev/null 2>&1; then
+    echo "✅ Streamlit is running (PID: $STREAMLIT_PID)"
 else
     echo "❌ Streamlit failed to start"
+    tail -5 /workspace/logs/streamlit.log
 fi
 
+# ============================================
+# FINAL STATUS
+# ============================================
 echo ""
 echo "=== FINAL STATUS ==="
-curl -s http://localhost:11434/api/tags > /dev/null && echo "✅ Ollama (port 11434)" || echo "❌ Ollama"
-curl -s http://localhost:8188/system_stats > /dev/null && echo "✅ ComfyUI (port 8188)" || echo "❌ ComfyUI"
-curl -s http://localhost:8501 > /dev/null && echo "✅ Streamlit (port 8501)" || echo "❌ Streamlit"
+curl -s http://localhost:11434/api/tags > /dev/null 2>&1 && echo "✅ Ollama (port 11434)" || echo "❌ Ollama"
+curl -s http://localhost:8188/system_stats > /dev/null 2>&1 && echo "✅ ComfyUI (port 8188)" || echo "❌ ComfyUI"
+curl -s http://localhost:8501 > /dev/null 2>&1 && echo "✅ Streamlit (port 8501)" || echo "❌ Streamlit"
+
 echo ""
-echo "If all three are ✅, go to RunPod Connect tab and click port 8501"
+echo "=== PIDS (for monitoring) ==="
+echo "Ollama: $OLLAMA_PID"
+echo "ComfyUI: $COMFY_PID"
+echo "Streamlit: $STREAMLIT_PID"
+
+echo ""
+echo "✅ If all three are ✅, go to RunPod Connect tab and click port 8501"
