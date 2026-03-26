@@ -3,11 +3,9 @@ import http.server
 import socketserver
 import json
 import requests
-import os
 
 PORT = 8501
 OLLAMA_URL = "http://localhost:11434/api/generate"
-COMFY_URL = "http://localhost:8188/prompt"
 
 HTML = '''<!DOCTYPE html>
 <html>
@@ -27,14 +25,27 @@ button{padding:10px 20px;margin-left:10px;background:#0066ff;color:white;border:
 <body>
 <h1>🤖 GIRL BOT AI</h1>
 <div id="status-ollama" class="status">Checking Ollama...</div>
-<div id="status-comfy" class="status">Checking ComfyUI...</div>
-<div class="chat" id="chat"><div class="bot">Hello! Type "draw: a cat" to generate images.</div></div>
+<div class="chat" id="chat"><div class="bot">Hello! Type your message.</div></div>
 <input id="input" placeholder="Ask anything..." onkeypress="if(event.keyCode==13)send()">
 <button onclick="send()">Send</button>
 <script>
-async function check(){fetch('/api/ollama').then(r=>r.ok?document.getElementById('status-ollama').innerHTML='✅ Ollama':document.getElementById('status-ollama').innerHTML='❌ Ollama').catch(e=>document.getElementById('status-ollama').innerHTML='❌ Ollama');fetch('/api/comfy').then(r=>r.ok?document.getElementById('status-comfy').innerHTML='✅ ComfyUI':document.getElementById('status-comfy').innerHTML='❌ ComfyUI').catch(e=>document.getElementById('status-comfy').innerHTML='❌ ComfyUI')}
+async function check(){
+    fetch('/api/ollama').then(r=>r.ok?document.getElementById('status-ollama').innerHTML='✅ Ollama':document.getElementById('status-ollama').innerHTML='❌ Ollama').catch(e=>document.getElementById('status-ollama').innerHTML='❌ Ollama')
+}
 setInterval(check,30000);check();
-async function send(){let msg=document.getElementById('input').value;if(!msg)return;let chat=document.getElementById('chat');chat.innerHTML+=`<div class="user">${msg}</div>`;document.getElementById('input').value='';chat.innerHTML+=`<div class="bot">🤔...</div>`;chat.scrollTop=chat.scrollHeight;let res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg})});let data=await res.json();chat.lastChild.remove();chat.innerHTML+=`<div class="bot">${data.response}</div>`;chat.scrollTop=chat.scrollHeight;}
+async function send(){
+    let msg=document.getElementById('input').value;if(!msg)return;
+    let chat=document.getElementById('chat');
+    chat.innerHTML+=`<div class="user">${msg}</div>`;
+    document.getElementById('input').value='';
+    chat.innerHTML+=`<div class="bot">🤔...</div>`;
+    chat.scrollTop=chat.scrollHeight;
+    let res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({msg})});
+    let data=await res.json();
+    chat.lastChild.remove();
+    chat.innerHTML+=`<div class="bot">${data.response}</div>`;
+    chat.scrollTop=chat.scrollHeight;
+}
 </script>
 </body>
 </html>'''
@@ -49,13 +60,6 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         elif self.path == '/api/ollama':
             try:
                 requests.get("http://localhost:11434/api/tags", timeout=2)
-                self.send_response(200)
-            except:
-                self.send_response(500)
-            self.end_headers()
-        elif self.path == '/api/comfy':
-            try:
-                requests.get("http://localhost:8188/system_stats", timeout=2)
                 self.send_response(200)
             except:
                 self.send_response(500)
@@ -80,7 +84,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({'response': f'Error: {e}'}).encode())
 
-print("Starting GIRL BOT AI at http://0.0.0.0:8501")
+print("GIRL BOT AI running at http://0.0.0.0:8501")
 httpd = socketserver.TCPServer(("0.0.0.0", PORT), Handler)
 httpd.serve_forever()
 EOF
