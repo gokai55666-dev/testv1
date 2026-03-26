@@ -1,12 +1,14 @@
 import requests
 
-def check(url):
+services = {
+    "Ollama": "http://localhost:11434",
+    "ComfyUI": "http://localhost:8188",
+    "Streamlit": "http://localhost:8501"
+}
+
+for name, url in services.items():
     try:
         r = requests.get(url, timeout=3)
-        return r.status_code
-    except:
-        return None
-
-print("Ollama:", check("http://localhost:11434"))
-print("ComfyUI:", check("http://localhost:8188"))
-print("Streamlit:", check("http://localhost:8501"))
+        print(f"{name}: OK ({r.status_code})")
+    except Exception as e:
+        print(f"{name}: FAIL ({e})")
