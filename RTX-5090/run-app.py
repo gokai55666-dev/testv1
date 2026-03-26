@@ -1,3 +1,10 @@
-curl http://localhost:11434/api/tags
-curl http://localhost:8188/system_stats
-curl http://localhost:8501 | head -5
+import os
+import subprocess
+
+os.environ["STREAMLIT_SERVER_ADDRESS"] = "0.0.0.0"
+
+subprocess.run([
+    "streamlit", "run", "app.py",
+    "--server.address", "0.0.0.0",
+    "--server.port", "8501"
+])
