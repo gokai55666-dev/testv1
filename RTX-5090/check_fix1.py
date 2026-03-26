@@ -1,3 +1,7 @@
-echo "=== OLLAMA LOGS ===" && tail -10 /workspace/logs/ollama.log
-echo "=== COMFYUI LOGS ===" && tail -10 /workspace/logs/comfyui.log
-echo "=== STREAMLIT LOGS ===" && tail -10 /workspace/logs/streamlit.log
+import subprocess
+
+services = ["ollama", "streamlit", "python"]
+
+for s in services:
+    result = subprocess.run(["pgrep", "-f", s], capture_output=True)
+    print(f"{s} running:", result.returncode == 0)
