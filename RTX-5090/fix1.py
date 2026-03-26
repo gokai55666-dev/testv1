@@ -1,14 +1,15 @@
-import requests
+# Girl Bot AI - Python dependencies
+# Install with:
+#   pip install -r requirements.txt --break-system-packages
+#
+# NOTE: PyTorch (torch) is installed separately with the cu128 index:
+#   pip install torch torchvision torchaudio \
+#       --index-url https://download.pytorch.org/whl/cu128 \
+#       --break-system-packages
+#
+# This avoids torch being pulled from PyPI (CPU-only version).
 
-services = {
-    "Ollama": "http://localhost:11434",
-    "ComfyUI": "http://localhost:8188",
-    "Streamlit": "http://localhost:8501"
-}
+streamlit>=1.32.0
+requests>=2.31.0
+accelerate>=0.27.0
 
-for name, url in services.items():
-    try:
-        r = requests.get(url, timeout=3)
-        print(f"{name}: OK ({r.status_code})")
-    except Exception as e:
-        print(f"{name}: FAIL ({e})")
