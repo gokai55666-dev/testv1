@@ -1,3 +1,4 @@
+cat > /workspace/testv1/RTX-5090/install.sh << 'EOF'
 #!/bin/bash
 set -e
 
@@ -34,3 +35,4 @@ cd ComfyUI
 pip install -r requirements.txt
 
 echo "INSTALL COMPLETE"
+EOF
