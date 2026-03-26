@@ -23,6 +23,7 @@ echo "Pulling model..."
 ollama serve &
 sleep 5
 ollama pull dolphin-llama3:8b
+pkill ollama
 
 echo "Installing ComfyUI..."
 cd /workspace
