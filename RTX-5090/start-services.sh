@@ -1,3 +1,4 @@
+cat > /workspace/testv1/RTX-5090/start-services.sh << 'EOF'
 #!/bin/bash
 set -e
 export OLLAMA_MODELS=/workspace/ollama
@@ -32,3 +33,4 @@ echo "Starting Streamlit..."
 streamlit run /workspace/girlbot/app.py --server.address 0.0.0.0 --server.port 8501 > /workspace/logs/streamlit.log 2>&1 &
 
 echo "=== All Services Started ==="
+EOF
