@@ -1,4 +1,3 @@
-cat > /workspace/frontend.py << 'EOF'
 import http.server
 import socketserver
 import json
@@ -87,4 +86,3 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 print("GIRL BOT AI running at http://0.0.0.0:8501")
 httpd = socketserver.TCPServer(("0.0.0.0", PORT), Handler)
 httpd.serve_forever()
-EOF
